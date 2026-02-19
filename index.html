@@ -5,17 +5,39 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Catering Duty Tracker</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: linear-gradient(to right, #4facfe, #00f2fe);
-      margin: 0;
-      padding: 0;
-    }
-    
-    table {
+  html, body {
+    width: 100%;
+    max-width: 100%;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden; /* lock horizontal scroll */
+    font-family: Arial, sans-serif;
+    background: linear-gradient(to right, #4facfe, #00f2fe);
+  }
+
+  input, select, button {
+    width: 100%;
+    padding: 12px;
+    margin-bottom: 12px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 1em;
+    box-sizing: border-box; /* keeps widths inside viewport */
+    height: 45px; /* uniform size */
+  }
+
+  button {
+    border: none;
+    cursor: pointer;
+    color: #fff;
+  }
+
+  table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 15px;
+    table-layout: fixed;   /* prevents overflow */
+    word-wrap: break-word; /* wraps long text */
   }
 
   table th, table td {
@@ -35,63 +57,55 @@
   .full-day {
     background-color: #d4edda;
   }
-    .container {
-      width: 95%;
-      max-width: 500px;
-      margin: 20px auto;
-      background: #fff;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    }
-    h2, h3 {
-      text-align: center;
-      margin-bottom: 15px;
-    }
-    label {
-      display: block;
-      margin: 8px 0 4px;
-      font-weight: bold;
-    }
-    input, select, button {
-      width: 100%;
-      padding: 12px;
-      margin-bottom: 12px;
-      border-radius: 8px;
-      border: 1px solid #ccc;
-      font-size: 1em;
-      box-sizing: border-box;
-      height: 45px; /* Ensures uniform size */
-    }
-    button {
-      border: none;
-      cursor: pointer;
-      color: #fff;
-    }
-    .btn-primary { background: #007bff; }
-    .btn-success { background: #28a745; }
-    .btn-info    { background: #17a2b8; }
-    .btn-danger  { background: #dc3545; }
-    .btn-secondary { background: #6c757d; }
-    .btn-dark    { background: #343a40; }
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-    ul li {
-      background: #f8f9fa;
-      margin: 6px 0;
-      padding: 10px;
-      border-radius: 6px;
-    }
-    .mt-4 { margin-top: 24px; }
-    .text-center { text-align: center; }
-    
-    
-    #dutyEmployees {
-  height: 180px; /* adjust as needed */
-}
-  </style>
+
+  .container {
+    width: 95%;
+    max-width: 500px;
+    margin: 20px auto;
+    background: #fff;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    box-sizing: border-box;
+  }
+
+  h2, h3 {
+    text-align: center;
+    margin-bottom: 15px;
+  }
+
+  label {
+    display: block;
+    margin: 8px 0 4px;
+    font-weight: bold;
+  }
+
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+
+  ul li {
+    background: #f8f9fa;
+    margin: 6px 0;
+    padding: 10px;
+    border-radius: 6px;
+  }
+
+  .mt-4 { margin-top: 24px; }
+  .text-center { text-align: center; }
+
+  #dutyEmployees {
+    height: 180px; /* enlarged to show multiple employees */
+  }
+
+  .btn-primary { background: #007bff; }
+  .btn-success { background: #28a745; }
+  .btn-info    { background: #17a2b8; }
+  .btn-danger  { background: #dc3545; }
+  .btn-secondary { background: #6c757d; }
+  .btn-dark    { background: #343a40; }
+</style>
 </head>
 <body>
   <div class="container">
@@ -112,6 +126,7 @@
     <ul id="employeeList"></ul>
 
     <!-- Duty Entry -->
+<p class="text-center">--------------------------------</p>
     <h3 class="mt-4">Duty Entry</h3>
     <input type="date" id="dutyDate">
     <input type="text" id="dutyLocation" placeholder="Location">
@@ -124,32 +139,38 @@
     <button class="btn-success" onclick="addDuty()">Save Duty Entry</button>
 
     <!-- Duty Records -->
+<p class="text-center">--------------------------------</p>
     <h3 class="mt-4">Duty Records</h3>
     <div id="dutyList"></div>
 
     <!-- Employee Report -->
+<p class="text-center">--------------------------------</p>
     <h3 class="mt-4">Employee Report</h3>
     <select id="reportEmployee"></select>
     <button class="btn-info" onclick="showReport()">Show Report</button>
     <div id="reportResult" class="mt-3"></div>
 
     <!-- Delete Employee -->
+    <p class="text-center">--------------------------------</p>
     <h3 class="mt-4">Delete Employee</h3>
     <input type="tel" id="deleteMobile" placeholder="Enter mobile number">
     <button class="btn-danger" onclick="deleteEmployee()">Delete Employee</button>
 
     <!-- Deleted Employees Log -->
+<p class="text-center">--------------------------------</p>
     <h3 class="mt-4">Deleted Employees Log</h3>
     <div id="deletedList"></div>
 
     <!-- Search Deleted Employee History -->
+<p class="text-center">--------------------------------</p>
     <h3 class="mt-4">Search Deleted Employee History</h3>
     <input type="tel" id="searchDeletedMobile" placeholder="Enter mobile number">
     <button class="btn-secondary" onclick="searchDeletedHistory()">Search History</button>
     <div id="deletedHistoryResult" class="mt-3"></div>
 
     <!-- Danger Zone -->
-    <h3 class="mt-4">Danger Zone</h3>
+<p class="text-center">--------------------------------</p>
+    <h3 class="mt-4">☠️⚠️ Danger Zone ⚠️☠️</h3>
     <button class="btn-dark" onclick="deleteAllData()">Delete All Data</button>
   </div>
 </body>
@@ -276,8 +297,8 @@
       tableHTML += `</tbody></table>`;
       let grandTotal = fullPay + halfPay;
       reportHTML += tableHTML;
-      reportHTML += `<p class="summary">Total: ${fullCount} Full Day = ₹${fullPay}, ${halfCount} Half Day = ₹${halfPay}</p>`;
-      reportHTML += `<p class="summary">Grand Total: ₹${grandTotal}</p>`;
+      reportHTML += `<p class="summary">Total:<br><br> ${fullCount} Full Day = Rs.${fullPay} <br> ${halfCount} Half Day = Rs.${halfPay}</p>`;
+      reportHTML += `<strong><p class="summary">Grand Total: Rs.${grandTotal}</p></strong>`;
     }
     document.getElementById('reportResult').innerHTML = reportHTML;
   }
