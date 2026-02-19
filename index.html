@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catering Duty Tracker</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #4facfe, #00f2fe);
+      margin: 0;
+      padding: 0;
+    }
+    
+    table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+  }
+
+  table th, table td {
+    border: 1px solid #ddd;
+    padding: 8px;
+    text-align: center;
+  }
+
+  table th {
+    background-color: #f2f2f2;
+  }
+
+  .half-day {
+    background-color: #fff3cd;
+  }
+
+  .full-day {
+    background-color: #d4edda;
+  }
+    .container {
+      width: 95%;
+      max-width: 500px;
+      margin: 20px auto;
+      background: #fff;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    h2, h3 {
+      text-align: center;
+      margin-bottom: 15px;
+    }
+    label {
+      display: block;
+      margin: 8px 0 4px;
+      font-weight: bold;
+    }
+    input, select, button {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 1em;
+      box-sizing: border-box;
+      height: 45px; /* Ensures uniform size */
+    }
+    button {
+      border: none;
+      cursor: pointer;
+      color: #fff;
+    }
+    .btn-primary { background: #007bff; }
+    .btn-success { background: #28a745; }
+    .btn-info    { background: #17a2b8; }
+    .btn-danger  { background: #dc3545; }
+    .btn-secondary { background: #6c757d; }
+    .btn-dark    { background: #343a40; }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    ul li {
+      background: #f8f9fa;
+      margin: 6px 0;
+      padding: 10px;
+      border-radius: 6px;
+    }
+    .mt-4 { margin-top: 24px; }
+    .text-center { text-align: center; }
+    
+    
+    #dutyEmployees {
+  height: 150px; /* adjust as needed */
+}
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>🍴 प्रवीण मिटकरी ✍️</h2>
+    <p class="text-center">--------------------------------</p>
+
+    <!-- Add Employee -->
+    <div>
+      <label>Employee name</label>
+      <input type="text" id="empName">
+      <label>Mobile number</label>
+      <input type="tel" id="empMobile">
+      <button class="btn-primary" onclick="addEmployee()">Save Employee</button>
+    </div>
+
+    <!-- Employees -->
+    <h3 class="mt-4">Employees</h3>
+    <ul id="employeeList"></ul>
+
+    <!-- Duty Entry -->
+    <h3 class="mt-4">Duty Entry</h3>
+    <input type="date" id="dutyDate">
+    <input type="text" id="dutyLocation" placeholder="Location">
+    <select id="dutyType">
+      <option value="Full Day">Full Day</option>
+      <option value="Half Day">Half Day</option>
+    </select>
+    
+    <select id="dutyEmployees" multiple></select>
+    <button class="btn-success" onclick="addDuty()">Save Duty Entry</button>
+
+    <!-- Duty Records -->
+    <h3 class="mt-4">Duty Records</h3>
+    <div id="dutyList"></div>
+
+    <!-- Employee Report -->
+    <h3 class="mt-4">Employee Report</h3>
+    <select id="reportEmployee"></select>
+    <button class="btn-info" onclick="showReport()">Show Report</button>
+    <div id="reportResult" class="mt-3"></div>
+
+    <!-- Delete Employee -->
+    <h3 class="mt-4">Delete Employee</h3>
+    <input type="tel" id="deleteMobile" placeholder="Enter mobile number">
+    <button class="btn-danger" onclick="deleteEmployee()">Delete Employee</button>
+
+    <!-- Deleted Employees Log -->
+    <h3 class="mt-4">Deleted Employees Log</h3>
+    <div id="deletedList"></div>
+
+    <!-- Search Deleted Employee History -->
+    <h3 class="mt-4">Search Deleted Employee History</h3>
+    <input type="tel" id="searchDeletedMobile" placeholder="Enter mobile number">
+    <button class="btn-secondary" onclick="searchDeletedHistory()">Search History</button>
+    <div id="deletedHistoryResult" class="mt-3"></div>
+
+    <!-- Danger Zone -->
+    <h3 class="mt-4">Danger Zone</h3>
+    <button class="btn-dark" onclick="deleteAllData()">Delete All Data</button>
+  </div>
+</body>
+</html>
+
+<script>
+  let employees = JSON.parse(localStorage.getItem('employees')) || [];
+  let duties = JSON.parse(localStorage.getItem('duties')) || [];
+  let deletedEmployees = JSON.parse(localStorage.getItem('deletedEmployees')) || [];
+
+  function saveData() {
+    localStorage.setItem('employees', JSON.stringify(employees));
+    localStorage.setItem('duties', JSON.stringify(duties));
+    localStorage.setItem('deletedEmployees', JSON.stringify(deletedEmployees));
+  }
+
+  function renderEmployees() {
+    const list = document.getElementById('employeeList');
+    const dropdown = document.getElementById('dutyEmployees');
+    const reportDropdown = document.getElementById('reportEmployee');
+    list.innerHTML = '';
+    dropdown.innerHTML = '';
+    reportDropdown.innerHTML = '';
+    employees.forEach(emp => {
+      list.innerHTML += `<li class="list-group-item d-flex justify-content-between">
+        ${emp.name} <span class="text-muted">${emp.mobile}</span>
+      </li>`;
+      dropdown.innerHTML += `<option value="${emp.mobile}">${emp.name}</option>`;
+      reportDropdown.innerHTML += `<option value="${emp.mobile}">${emp.name}</option>`;
+    });
+    renderDeletedEmployees();
+  }
+
+  function renderDuties() {
+    const list = document.getElementById('dutyList');
+    if(duties.length === 0) {
+      list.innerHTML = `<p class="text-muted">No duty records yet.</p>`;
+      return;
+    }
+    let tableHTML = `<table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Location</th>
+          <th>Duty Type</th>
+          <th>Employees</th>
+        </tr>
+      </thead>
+      <tbody>`;
+    duties.forEach(duty => {
+      const names = duty.employees.map(mob => {
+        const emp = employees.find(e => e.mobile === mob);
+        return emp ? emp.name : 'Deleted';
+      }).join(', ');
+      const rowClass = duty.duty_type === "Full Day" ? "full-day" : "half-day";
+      tableHTML += `
+        <tr class="${rowClass}">
+          <td>${duty.date}</td>
+          <td>${duty.location}</td>
+          <td>${duty.duty_type}</td>
+          <td>${names}</td>
+        </tr>`;
+    });
+    tableHTML += `</tbody></table>`;
+    list.innerHTML = tableHTML;
+  }
+
+  function addEmployee() {
+    const name = document.getElementById('empName').value.trim();
+    const mobile = document.getElementById('empMobile').value.trim();
+    if(name && mobile) {
+      employees.push({name, mobile});
+      saveData();
+      renderEmployees();
+      document.getElementById('empName').value = '';
+      document.getElementById('empMobile').value = '';
+    }
+  }
+
+  function addDuty() {
+    const date = document.getElementById('dutyDate').value;
+    const location = document.getElementById('dutyLocation').value.trim();
+    const duty_type = document.getElementById('dutyType').value;
+    const selected = Array.from(document.getElementById('dutyEmployees').selectedOptions).map(opt => opt.value);
+    if(date && location && selected.length > 0) {
+      duties.push({date, location, duty_type, employees: selected});
+      saveData();
+      renderDuties();
+      document.getElementById('dutyDate').value = '';
+      document.getElementById('dutyLocation').value = '';
+    }
+  }
+
+  function showReport() {
+    const mobile = document.getElementById('reportEmployee').value;
+    if(mobile === "") return;
+    const emp = employees.find(e => e.mobile === mobile);
+    let reportHTML = `<h5>${emp.name} (${emp.mobile})</h5>`;
+    let fullCount = 0, halfCount = 0;
+    let fullPay = 0, halfPay = 0;
+    let records = duties.filter(d => d.employees.includes(mobile));
+    if(records.length === 0) {
+      reportHTML += `<p class="text-muted">No duty records found.</p>`;
+    } else {
+      let tableHTML = `<table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Location</th>
+            <th>Duty Type</th>
+          </tr>
+        </thead>
+        <tbody>`;
+      records.forEach(r => {
+        if(r.duty_type === "Full Day") { fullCount++; fullPay += 700; }
+        else { halfCount++; halfPay += 450; }
+        const rowClass = r.duty_type === "Full Day" ? "full-day" : "half-day";
+        tableHTML += `<tr class="${rowClass}">
+          <td>${r.date}</td>
+          <td>${r.location}</td>
+          <td>${r.duty_type}</td>
+        </tr>`;
+      });
+      tableHTML += `</tbody></table>`;
+      let grandTotal = fullPay + halfPay;
+      reportHTML += tableHTML;
+      reportHTML += `<p class="summary">Total: ${fullCount} Full Day = ₹${fullPay}, ${halfCount} Half Day = ₹${halfPay}</p>`;
+      reportHTML += `<p class="summary">Grand Total: ₹${grandTotal}</p>`;
+    }
+    document.getElementById('reportResult').innerHTML = reportHTML;
+  }
+
+  function deleteEmployee() {
+    const mobile = document.getElementById('deleteMobile').value.trim();
+    if(!mobile) return;
+    const empIndex = employees.findIndex(e => e.mobile === mobile);
+    if(empIndex === -1) {
+      alert("No employee found with that mobile number.");
+      return;
+    }
+    if(confirm(`Delete employee ${employees[empIndex].name} (${mobile}) and all their records?`)) {
+      // Collect their duty history before deletion
+      let history = duties.filter(d => d.employees.includes(mobile)).map(d => {
+        const coworkers = d.employees.filter(m => m !== mobile).map(m => {
+          const emp = employees.find(e => e.mobile === m);
+          return emp ? emp.name : 'Deleted';
+        });
+        return {
+          date: d.date,
+          location: d.location,
+          duty_type: d.duty_type,
+          coworkers: coworkers
+        };
+      });
+
+      // Save to deleted log with history
+      deletedEmployees.push({
+        name: employees[empIndex].name,
+        mobile: employees[empIndex].mobile,
+        history: history
+      });
+
+      // Remove employee
+      employees.splice(empIndex, 1);
+
+      // Remove this employee from duties
+      duties.forEach(d => {
+        d.employees = d.employees.filter(mob => mob !== mobile);
+      });
+
+      saveData();
+      renderEmployees();
+      renderDuties();
+      renderDeletedEmployees();
+      document.getElementById('reportResult').innerHTML = '';
+      document.getElementById('deleteMobile').value = '';
+    }
+  }
+
+  
+  function renderDeletedEmployees() {
+    let container = document.getElementById('deletedList');
+    if(!container) return;
+    container.innerHTML = '';
+    if(deletedEmployees.length === 0) {
+      container.innerHTML = `<p class="text-muted">No employees deleted yet.</p>`;
+    } else {
+      deletedEmployees.forEach(emp => {
+        container.innerHTML += `<div class="record-card">
+          <strong>${emp.name}</strong> (${emp.mobile})<br>
+          <em>Duty History:</em>
+          ${emp.history.length === 0 ? '<p class="text-muted">No records</p>' : emp.history.map(h => `
+            <div>
+              ${h.date} - ${h.location} (${h.duty_type})<br>
+              With: ${h.coworkers.join(', ')}
+            </div>
+          `).join('')}
+        </div>`;
+      });
+    }
+  }
+
+  function searchDeletedHistory() {
+    const mobile = document.getElementById('searchDeletedMobile').value.trim();
+    if(!mobile) return;
+    const emp = deletedEmployees.find(e => e.mobile === mobile);
+    let resultHTML = '';
+    if(!emp) {
+      resultHTML = `<p class="text-muted">No deleted employee found with that mobile number.</p>`;
+    } else {
+      resultHTML = `<h5>${emp.name} (${emp.mobile})</h5>`;
+      if(emp.history.length === 0) {
+        resultHTML += `<p class="text-muted">No duty records found.</p>`;
+      } else {
+        let tableHTML = `<table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Location</th>
+              <th>Duty Type</th>
+              <th>Coworkers</th>
+            </tr>
+          </thead>
+          <tbody>`;
+        emp.history.forEach(h => {
+          const rowClass = h.duty_type === "Full Day" ? "full-day" : "half-day";
+          tableHTML += `<tr class="${rowClass}">
+            <td>${h.date}</td>
+            <td>${h.location}</td>
+            <td>${h.duty_type}</td>
+            <td>${h.coworkers.join(', ')}</td>
+          </tr>`;
+        });
+        tableHTML += `</tbody></table>`;
+        resultHTML += tableHTML;
+      }
+    }
+    document.getElementById('deletedHistoryResult').innerHTML = resultHTML;
+  }
+
+  function deleteAllData() {
+    if(confirm("Are you sure you want to delete all data?")) {
+      employees = [];
+      duties = [];
+      deletedEmployees = [];
+      saveData();
+      renderEmployees();
+      renderDuties();
+      renderDeletedEmployees();
+      document.getElementById('reportResult').innerHTML = '';
+      document.getElementById('deletedHistoryResult').innerHTML = '';
+    }
+  }
+
+  // Initial render
+  renderEmployees();
+  renderDuties();
+  renderDeletedEmployees();
+</script>
