@@ -1,441 +1,441 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="mr">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Catering Duty Tracker</title>
+  <title></title>
   <style>
-  html, body {
-    width: 100%;
-    max-width: 100%;
-    margin: 0;
-    padding: 0;
-    overflow-x: hidden; /* lock horizontal scroll */
-    font-family: Arial, sans-serif;
-    background: linear-gradient(to right, #4facfe, #00f2fe);
-  }
-
-  input, select, button {
-    width: 100%;
-    padding: 12px;
-    margin-bottom: 12px;
-    border-radius: 8px;
-    border: 1px solid #ccc;
-    font-size: 1em;
-    box-sizing: border-box; /* keeps widths inside viewport */
-    height: 45px; /* uniform size */
-  }
-
-  button {
-    border: none;
-    cursor: pointer;
-    color: #fff;
-  }
-
-  table {
-    width: 100%;
-    border-collapse: collapse;
-    margin-top: 15px;
-    table-layout: fixed;   /* prevents overflow */
-    word-wrap: break-word; /* wraps long text */
-  }
-
-  
-  
-  table td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: center;
-  font-size: 0.85em; /* smaller font size */
-}
-
-  table th {
-    background-color: #f2f2f2;
-    border: 1px solid #ddd;
-    padding: 8px;
-    text-align: center;
-    font-weight: bold;
-  }
-
-  .half-day {
-    background-color: #fff3cd;
-  }
-
-  .full-day {
-    background-color: #d4edda;
-  }
-
-  .container {
-    width: 95%;
-    max-width: 500px;
-    margin: 20px auto;
-    background: #fff;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
-    box-sizing: border-box;
-  }
-
-  h2, h3 {
-    text-align: center;
-    margin-bottom: 15px;
-  }
-
-  label {
-    display: block;
-    margin: 8px 0 4px;
-    font-weight: bold;
-  }
-
-  ul {
-    list-style: none;
-    padding: 0;
-  }
-
-  ul li {
-    background: #f8f9fa;
-    margin: 6px 0;
-    padding: 10px;
-    border-radius: 6px;
-  }
-
-  .mt-4 { margin-top: 24px; }
-  .text-center { text-align: center; }
-
-  #dutyEmployees {
-    height: 180px; /* enlarged to show multiple employees */
-  }
-
-  .btn-primary { background: #007bff; }
-  .btn-success { background: #28a745; }
-  .btn-info    { background: #17a2b8; }
-  .btn-danger  { background: #dc3545; }
-  .btn-secondary { background: #6c757d; }
-  .btn-dark    { background: #343a40; }
-</style>
+    body {
+      margin: 0; padding: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to right, #4facfe, #00f2fe);
+    }
+    .container {
+      width: 95%; max-width: 600px;
+      margin: 20px auto; background: #fff;
+      padding: 20px; border-radius: 12px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    h2, h3 { text-align: center; }
+    label { display: block; margin: 8px 0 4px; font-weight: bold; }
+    input, select, button {
+      width: 100%; padding: 12px; margin-bottom: 12px;
+      border-radius: 8px; border: 1px solid #ccc;
+      font-size: 1em; box-sizing: border-box; height: 45px;
+    }
+    button { border: none; cursor: pointer; color: #fff; }
+    .btn-primary { background: #007bff; }
+    .btn-success { background: #28a745; }
+    .btn-danger { background: #dc3545; }
+    .btn-secondary { background: #6c757d; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    table td, table th {
+      border: 1px solid #ddd; padding: 8px; text-align: center;
+    }
+    table th { background-color: #f2f2f2; }
+    #billOutput {
+      margin-top: 20px; font-weight: bold; font-size: 1.1em;
+      background: #f8f9fa; padding: 15px; border-radius: 8px;
+    }
+  </style>
 </head>
 <body>
   <div class="container">
-    <h2>🍴 प्रवीण मिटकरी ✍️</h2>
-    <p class="text-center">--------------------------------</p>
+<div style="display:flex; align-items:center; justify-content:space-between;">
+  <h2 id="headerTitle" style="margin:0;"></h2>
+  <button id="settingsBtn" style="margin-left:10px;">⚙️</button>
+</div>
 
-    <!-- Add Employee -->
-    <div>
-      <label>नवीन मुलाचे नाव </label>
-      <input type="text" id="empName">
-      <label>मोबाईल नंबर</label>
-      <input type="tel" id="empMobile">
-      <button class="btn-primary" onclick="addEmployee()">Save</button>
+<!-- Overlay -->
+<div id="settingsOverlay" 
+     style="display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.3); backdrop-filter:blur(5px); z-index:1000;">
+</div>
+
+<!-- Popup Box -->
+<div id="settingsPopup" 
+     style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%);
+            background:#fff; border-radius:10px; padding:20px; width:300px;
+            box-shadow:0 4px 12px rgba(0,0,0,0.3); z-index:1001; text-align:center;">
+  
+  <h3 style="margin-top:0; font-size:20px; color:#333;">सेटिंग्ज</h3>
+  
+  <label style="display:block; margin:10px 0;">
+    नाव: <input type="text" id="userNameInput" 
+                style="width:90%; padding:8px; border:1px solid #ccc; border-radius:5px;">
+  </label>
+  
+  <label style="display:block; margin:10px 0;">
+    मोबाइल नंबर: <input type="text" id="mobileInput" 
+                style="width:90%; padding:8px; border:1px solid #ccc; border-radius:5px;">
+  </label>
+  
+  <button id="saveSettings" 
+          style="background:#28a745; color:#fff; padding:8px 12px; margin:8px 4px;
+                 border:none; border-radius:5px; cursor:pointer;">
+    Save
+  </button>
+  
+  <button id="closeSettings" 
+          style="background:#dc3545; color:#fff; padding:8px 12px; margin:8px 4px;
+                 border:none; border-radius:5px; cursor:pointer;">
+    Close
+  </button>
+</div>
+    <!-- फॉर्म -->
+    <form id="dutyForm">
+      <label for="dutyDate">ड्युटी तारीख</label>
+      <input type="date" id="dutyDate" required>
+
+      <label for="dutyLocation">ठिकाण</label>
+      <input type="text" id="dutyLocation" placeholder="ठिकाण लिहा" required>
+
+      <label for="dutyType">ड्युटी प्रकार</label>
+      <select id="dutyType" required>
+        <option value="full">फुल डे</option>
+        <option value="half">हाफ डे</option>
+      </select>
+
+      <button type="submit" class="btn-primary">ड्युटी नोंदवा</button>
+      <button type="reset" class="btn-secondary">साफ करा</button>
+    </form>
+
+    <!-- ड्युटी रेकॉर्ड्स -->
+    <h3 class="mt-4">📋 ड्युटी रेकॉर्ड्स</h3>
+    <table id="recordsTable">
+      <thead>
+        <tr>
+          <th>तारीख</th>
+          <th>ठिकाण</th>
+          <th>फुल डे</th>
+          <th>हाफ डे</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+
+    <!-- बटणं -->
+    <div class="mt-4 text-center">
+      
+      <button class="btn-success" id="generateBill">💵 बिल तयार करा</button>
+    
+           
+   <button id="sendWhatsApp" class="btn-success">📲 WhatsApp वर पाठवा</button>
+  
+    
+    </div>
+   
+    <!-- नवीन: एक रेकॉर्ड काढण्यासाठी -->
+    <div class="mt-4 text-center">
+      <label for="deleteDate">तारीख निवडा (रेकॉर्ड काढण्यासाठी)</label>
+      <input type="date" id="deleteDate">
+      <button class="btn-danger" id="deleteOne">एक रेकॉर्ड Delete करा</button>
+    </div>
+ 
+     <!-- WhatsApp बटण -->
+    <div class="mt-4 text-center">
+      <button class="btn-danger" id="deleteAll">सर्व रेकॉर्ड Delete करा </button>
     </div>
 
-    <!-- Employees -->
-    <h3 class="mt-4">काम करणाऱ्या मुलांची यादी </h3>
-    <ul id="employeeList"></ul>
+    <!-- बिल आउटपुट -->
+    <div id="billOutput"></div>
 
-    <!-- Duty Entry -->
-<p class="text-center">--------------------------------</p>
-    <h3 class="mt-4">आजच्या कामाची नोंद कर</h3>
-    <input type="date" id="dutyDate" placeholder="Date">
-    <input type="text" id="dutyLocation" placeholder="लोकेशनचे नाव">
-    <select id="dutyType">
-       <option value="Half Day">हाफ डे</option>
-      <option value="Full Day">फुल डे</option>
-     
-    </select>
-    
-    <select id="dutyEmployees" multiple></select>
-    <button class="btn-success" onclick="addDuty()">Save Duty</button>
-
-    <!-- Duty Records -->
-<p class="text-center">--------------------------------</p>
-    <h3 class="mt-4">मुलांची कामे (तारखेनुसार)</h3>
-    <div id="dutyList"></div>
-
-    <!-- Employee Report -->
-<p class="text-center">--------------------------------</p>
-    <h3 class="mt-4">प्रत्येक मुलाचे कामे दाखव</h3>
-    <select id="reportEmployee"></select>
-    <button class="btn-info" onclick="showReport()">Show Report</button>
-    <div id="reportResult" class="mt-3"></div>
-
-    <!-- Delete Employee -->
-    <p class="text-center">--------------------------------</p>
-    <h3 class="mt-4">काम सोडून गेलेल्या मुलाला डिलिट कर</h3>
-    <input type="tel" id="deleteMobile" placeholder="मोबाईल नंबर">
-    <button class="btn-danger" onclick="deleteEmployee()">Delete</button>
-
-    <!-- Deleted Employees Log -->
-<p class="text-center">--------------------------------</p>
-    <h3 class="mt-4">Delete केलेल्या मुलांची यादी</h3>
-    <div id="deletedList"></div>
-
-    <!-- Search Deleted Employee History -->
-<p class="text-center">--------------------------------</p>
-    <h3 class="mt-4">काम सोडून गेलेल्या मुलाचा तपशील </h3>
-    <input type="tel" id="searchDeletedMobile" placeholder="मोबाईल नंबर">
-    <button class="btn-secondary" onclick="searchDeletedHistory()">शोधा</button>
-    <div id="deletedHistoryResult" class="mt-3"></div>
-
-    <!-- Danger Zone -->
-<p class="text-center">--------------------------------</p>
-    <h3 class="mt-4">☠️⚠️ Danger Zone ⚠️☠️</h3>
-    <button class="btn-dark" onclick="deleteAllData()">Delete All Data</button>
+   
   </div>
-  <h6 style="text-align:center">Created By Guru Gaidhankar</h6>
 </body>
 </html>
 
 <script>
-  let employees = JSON.parse(localStorage.getItem('employees')) || [];
-  let duties = JSON.parse(localStorage.getItem('duties')) || [];
-  let deletedEmployees = JSON.parse(localStorage.getItem('deletedEmployees')) || [];
+  const form = document.getElementById('dutyForm');
+const tableBody = document.querySelector('#recordsTable tbody');
+const deleteAllBtn = document.getElementById('deleteAll');
+const deleteOneBtn = document.getElementById('deleteOne');
+const generateBillBtn = document.getElementById('generateBill');
+const billOutput = document.getElementById('billOutput');
 
-  function saveData() {
-    localStorage.setItem('employees', JSON.stringify(employees));
-    localStorage.setItem('duties', JSON.stringify(duties));
-    localStorage.setItem('deletedEmployees', JSON.stringify(deletedEmployees));
+// नवीन बटण
+
+
+function formatDate(dateStr) {
+  const d = new Date(dateStr);
+  const day = String(d.getDate()).padStart(2, '0');
+  const month = String(d.getMonth() + 1).padStart(2, '0');
+  const year = String(d.getFullYear()).slice(-2);
+  return `${day}/${month}/${year}`;
+}
+
+function saveData() {
+  const rows = Array.from(tableBody.rows).map(row => ({
+    date: row.cells[0].innerText,
+    location: row.cells[1].innerText,
+    full: row.cells[2].innerText,
+    half: row.cells[3].innerText
+  }));
+  localStorage.setItem("dutyRecords", JSON.stringify(rows));
+}
+
+function loadData() {
+  const data = JSON.parse(localStorage.getItem("dutyRecords") || "[]");
+  tableBody.innerHTML = "";
+  data.forEach(record => {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${record.date}</td>
+      <td>${record.location}</td>
+      <td>${record.full}</td>
+      <td>${record.half}</td>
+    `;
+    tableBody.appendChild(row);
+  });
+}
+
+form.addEventListener('submit', function(e) {
+  e.preventDefault();
+  const date = document.getElementById('dutyDate').value;
+  const location = document.getElementById('dutyLocation').value.trim();
+  const type = document.getElementById('dutyType').value;
+
+  if (!location) {
+    alert("ठिकाण रिकामे ठेवू नका. कृपया ठिकाण लिहा.");
+    return;
   }
 
-  function renderEmployees() {
-    const list = document.getElementById('employeeList');
-    const dropdown = document.getElementById('dutyEmployees');
-    const reportDropdown = document.getElementById('reportEmployee');
-    list.innerHTML = '';
-    dropdown.innerHTML = '';
-    reportDropdown.innerHTML = '';
-    employees.forEach(emp => {
-      list.innerHTML += `<li class="list-group-item d-flex justify-content-between">
-        ${emp.name} <span class="text-muted">${emp.mobile}</span>
-      </li>`;
-      dropdown.innerHTML += `<option value="${emp.mobile}">${emp.name}</option>`;
-      reportDropdown.innerHTML += `<option value="${emp.mobile}">${emp.name}</option>`;
-    });
-    renderDeletedEmployees();
-  }
+  const formattedDate = formatDate(date);
+  let existingRow = Array.from(tableBody.rows).find(row => 
+    row.cells[0].innerText === formattedDate && row.cells[1].innerText === location
+  );
 
-  function renderDuties() {
-    const list = document.getElementById('dutyList');
-    if(duties.length === 0) {
-      list.innerHTML = `<p class="text-muted">No duty records yet.</p>`;
-      return;
-    }
-    let tableHTML = `<table>
-      <thead>
-        <tr>
-          <th>तारीख</th>
-          <th>लोकेशन</th>
-          <th>हाफ/फुल</th>
-          <th>मुलांची नावे </th>
-        </tr>
-      </thead>
-      <tbody>`;
-    duties.forEach(duty => {
-      const names = duty.employees.map(mob => {
-        const emp = employees.find(e => e.mobile === mob);
-        return emp ? emp.name : 'Deleted';
-      }).join(', ');
-      const rowClass = duty.duty_type === "Full Day" ? "full-day" : "half-day";
-      tableHTML += `
-        <tr class="${rowClass}">
-          <td>${duty.date}</td>
-          <td>${duty.location}</td>
-          <td>${duty.duty_type}</td>
-          <td>${names}</td>
-        </tr>`;
-    });
-    tableHTML += `</tbody></table>`;
-    list.innerHTML = tableHTML;
-  }
-
-  function addEmployee() {
-    const name = document.getElementById('empName').value.trim();
-    const mobile = document.getElementById('empMobile').value.trim();
-    if(name && mobile) {
-      employees.push({name, mobile});
-      saveData();
-      renderEmployees();
-      document.getElementById('empName').value = '';
-      document.getElementById('empMobile').value = '';
-    }
-  }
-
-  function addDuty() {
-    const date = document.getElementById('dutyDate').value;
-    const location = document.getElementById('dutyLocation').value.trim();
-    const duty_type = document.getElementById('dutyType').value;
-    const selected = Array.from(document.getElementById('dutyEmployees').selectedOptions).map(opt => opt.value);
-    if(date && location && selected.length > 0) {
-      duties.push({date, location, duty_type, employees: selected});
-      saveData();
-      renderDuties();
-      document.getElementById('dutyDate').value = '';
-      document.getElementById('dutyLocation').value = '';
-    }
-  }
-
-  function showReport() {
-    const mobile = document.getElementById('reportEmployee').value;
-    if(mobile === "") return;
-    const emp = employees.find(e => e.mobile === mobile);
-    let reportHTML = `<h5>${emp.name} (${emp.mobile})</h5>`;
-    let fullCount = 0, halfCount = 0;
-    let fullPay = 0, halfPay = 0;
-    let records = duties.filter(d => d.employees.includes(mobile));
-    if(records.length === 0) {
-      reportHTML += `<p class="text-muted">No duty records found.</p>`;
+  if (existingRow) {
+    if (type === 'full') {
+      existingRow.cells[2].innerText = parseInt(existingRow.cells[2].innerText || 0) + 1;
+      existingRow.cells[3].innerText = "";
     } else {
-      let tableHTML = `<table>
-        <thead>
-          <tr>
-            <th>तारीख</th>
-            <th>लोकेशन</th>
-            <th>हाफ/फुल</th>
-          </tr>
-        </thead>
-        <tbody>`;
-      records.forEach(r => {
-        if(r.duty_type === "Full Day") { fullCount++; fullPay += 700; }
-        else { halfCount++; halfPay += 450; }
-        const rowClass = r.duty_type === "Full Day" ? "full-day" : "half-day";
-        tableHTML += `<tr class="${rowClass}">
-          <td>${r.date}</td>
-          <td>${r.location}</td>
-          <td>${r.duty_type}</td>
-        </tr>`;
-      });
-      tableHTML += `</tbody></table>`;
-      let grandTotal = fullPay + halfPay;
-      reportHTML += tableHTML;
-      reportHTML += `<p class="summary">Total:<br><br> ${fullCount} फुल डे = Rs.${fullPay} <br> ${halfCount} हाफ डे  = Rs.${halfPay}</p>`;
-      reportHTML += `<strong><p class="summary">Grand Total: Rs.${grandTotal}</p></strong>`;
+      existingRow.cells[3].innerText = parseInt(existingRow.cells[3].innerText || 0) + 1;
+      existingRow.cells[2].innerText = "";
     }
-    document.getElementById('reportResult').innerHTML = reportHTML;
+  } else {
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${formattedDate}</td>
+      <td>${location}</td>
+      <td>${type === 'full' ? 1 : ""}</td>
+      <td>${type === 'half' ? 1 : ""}</td>
+    `;
+    tableBody.appendChild(row);
   }
 
-  function deleteEmployee() {
-    const mobile = document.getElementById('deleteMobile').value.trim();
-    if(!mobile) return;
-    const empIndex = employees.findIndex(e => e.mobile === mobile);
-    if(empIndex === -1) {
-      alert("No employee found with that mobile number.");
-      return;
-    }
-    if(confirm(`Delete employee ${employees[empIndex].name} (${mobile}) and all their records?`)) {
-      // Collect their duty history before deletion
-      let history = duties.filter(d => d.employees.includes(mobile)).map(d => {
-        const coworkers = d.employees.filter(m => m !== mobile).map(m => {
-          const emp = employees.find(e => e.mobile === m);
-          return emp ? emp.name : 'Deleted';
-        });
-        return {
-          date: d.date,
-          location: d.location,
-          duty_type: d.duty_type,
-          coworkers: coworkers
-        };
-      });
+  saveData();
+  form.reset();
+});
 
-      // Save to deleted log with history
-      deletedEmployees.push({
-        name: employees[empIndex].name,
-        mobile: employees[empIndex].mobile,
-        history: history
-      });
-
-      // Remove employee
-      employees.splice(empIndex, 1);
-
-      // Remove this employee from duties
-      duties.forEach(d => {
-        d.employees = d.employees.filter(mob => mob !== mobile);
-      });
-
-      saveData();
-      renderEmployees();
-      renderDuties();
-      renderDeletedEmployees();
-      document.getElementById('reportResult').innerHTML = '';
-      document.getElementById('deleteMobile').value = '';
-    }
+deleteAllBtn.addEventListener('click', function() {
+  if (confirm('तुम्हाला खात्री आहे का? सर्व रेकॉर्ड्स काढून टाकले जातील.')) {
+    tableBody.innerHTML = '';
+    billOutput.innerHTML = '';
+    localStorage.removeItem("dutyRecords");
   }
+});
 
+deleteOneBtn.addEventListener('click', function() {
+  const dateVal = document.getElementById('deleteDate').value;
+  if (!dateVal) {
+    alert("कृपया तारीख निवडा.");
+    return;
+  }
+  const formattedDate = formatDate(dateVal);
+  let rowToDelete = Array.from(tableBody.rows).find(row => row.cells[0].innerText === formattedDate);
+  if (rowToDelete) {
+    tableBody.removeChild(rowToDelete);
+    saveData();
+    alert("रेकॉर्ड काढण्यात आला.");
+  } else {
+    alert("त्या तारखेचा रेकॉर्ड सापडला नाही.");
+  }
+});
+
+generateBillBtn.addEventListener('click', function() {
+  let fullCount = 0;
+  let halfCount = 0;
+
+  Array.from(tableBody.rows).forEach(row => {
+    const f = parseInt(row.cells[2].innerText) || 0;
+    const h = parseInt(row.cells[3].innerText) || 0;
+    fullCount += f;
+    halfCount += h;
+  });
+
+  const fullSubtotal = fullCount * 800;
+  const halfSubtotal = halfCount * 500;
+  const total = fullSubtotal + halfSubtotal;
+
+  billOutput.innerHTML = `
+  <div style="
+    background: #fefefe;
+    border: 2px solid #4CAF50;
+    border-radius: 12px;
+    padding: 16px;
+    font-family: 'Segoe UI', sans-serif;
+    color: #333;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    max-width: 320px;
+    line-height: 1.6;
+  ">
+    <div style="text-align:center; margin-bottom:10px;">
+      💵 <strong style="color:#2E8B57; font-size:20px;">बिल</strong>
+    </div>
+    <div style="margin-bottom:8px; color:#555;">
+      हाफ डे = ${halfCount}<br>
+      ${halfCount} × 500 = <strong style="color:#000;">Rs.${halfSubtotal}</strong>
+    </div>
+    <div style="margin-bottom:8px; color:#555;">
+      फुल डे = ${fullCount}<br>
+      ${fullCount} × 800 = <strong style="color:#000;">Rs.${fullSubtotal}</strong>
+    </div>
+    <div style="text-align:right; margin-top:12px;">
+      <strong style="color:#d32f2f; font-size:18px;">एकूण = Rs.${total}</strong>
+    </div>
+  </div>
+`;
+});
+
+// WhatsApp वर पाठवणे
+// HTML मध्ये असलेले बटण: <button id="sendWhatsApp" class="btn-success">📲 WhatsApp वर पाठवा</button>
+
+const sendWhatsAppBtn = document.getElementById("sendWhatsApp");
+
+sendWhatsAppBtn.addEventListener("click", function() {
   
-  function renderDeletedEmployees() {
-    let container = document.getElementById('deletedList');
-    if(!container) return;
-    container.innerHTML = '';
-    if(deletedEmployees.length === 0) {
-      container.innerHTML = `<p class="text-muted">रेकॉर्ड नाही.</p>`;
-    } else {
-      deletedEmployees.forEach(emp => {
-        container.innerHTML += `<div class="record-card">
-          <strong>${emp.name}</strong> (${emp.mobile})<br>
-          <em>Duty History:</em>
-          ${emp.history.length === 0 ? '<p class="text-muted">No records</p>' : emp.history.map(h => `
-            <div>
-              ${h.date} - ${h.location} (${h.duty_type})<br>
-              With: ${h.coworkers.join(', ')}
-            </div>
-          `).join('')}
-        </div>`;
-      });
+  const savedName = localStorage.getItem("userName");
+  const savedMobile = localStorage.getItem("mobileNumber");
+  
+  // हार्डकोडेड मोबाइल नंबर (भारतीय कोडसह)
+  const fullNumber = savedMobile;  // <-- इथे तुमचा नंबर द्या
+
+  // नाव compulsory करा
+  let userName = savedName;
+  
+
+  let message = `📋 ड्युटी रेकॉर्ड्स (${userName}):\n`;
+  let dutyCount = 0;
+
+  Array.from(tableBody.rows).forEach(row => {
+    let dutyType = "";
+    if (row.cells[2].innerText) {
+      dutyType = "फुल डे";
+      dutyCount += parseInt(row.cells[2].innerText) || 0;
+    } else if (row.cells[3].innerText) {
+      dutyType = "हाफ डे";
+      dutyCount += parseInt(row.cells[3].innerText) || 0;
     }
+    message += `${row.cells[0].innerText}  ${row.cells[1].innerText}  ${dutyType}\n`;
+  });
+
+  // एकूण ड्युटीज दाखवा
+  message += `\nएकूण ड्युटीज: ${dutyCount}\n`;
+
+  // बिल शेवटी जोडा
+  if (billOutput.innerText.trim() !== "") {
+    message += "\n" + billOutput.innerText;
   }
 
-  function searchDeletedHistory() {
-    const mobile = document.getElementById('searchDeletedMobile').value.trim();
-    if(!mobile) return;
-    const emp = deletedEmployees.find(e => e.mobile === mobile);
-    let resultHTML = '';
-    if(!emp) {
-      resultHTML = `<p class="text-muted">No deleted employee found with that mobile number.</p>`;
-    } else {
-      resultHTML = `<h5>${emp.name} (${emp.mobile})</h5>`;
-      if(emp.history.length === 0) {
-        resultHTML += `<p class="text-muted">No duty records found.</p>`;
-      } else {
-        let tableHTML = `<table>
-          <thead>
-            <tr>
-              <th>तारीख</th>
-              <th>Location</th>
-              <th>हाफ/फुल</th>
-              <th>सोबती</th>
-            </tr>
-          </thead>
-          <tbody>`;
-        emp.history.forEach(h => {
-          const rowClass = h.duty_type === "Full Day" ? "full-day" : "half-day";
-          tableHTML += `<tr class="${rowClass}">
-            <td>${h.date}</td>
-            <td>${h.location}</td>
-            <td>${h.duty_type}</td>
-            <td>${h.coworkers.join(', ')}</td>
-          </tr>`;
-        });
-        tableHTML += `</tbody></table>`;
-        resultHTML += tableHTML;
-      }
-    }
-    document.getElementById('deletedHistoryResult').innerHTML = resultHTML;
+  const url = `https://wa.me/${fullNumber}?text=${encodeURIComponent(message)}`;
+  window.open(url, "_blank");
+});
+
+
+// Name mobile numbrr
+const settingsBtn = document.getElementById("settingsBtn");
+const settingsPopup = document.getElementById("settingsPopup");
+const saveSettingsBtn = document.getElementById("saveSettings");
+const closeSettingsBtn = document.getElementById("closeSettings");
+const userNameInput = document.getElementById("userNameInput");
+const mobileInput = document.getElementById("mobileInput");
+const headerTitle = document.getElementById("headerTitle");
+
+// ⚙️ क्लिक केल्यावर popup उघडा
+settingsBtn.addEventListener("click", function() {
+  settingsPopup.style.display = "block";
+});
+
+// Close बटण
+closeSettingsBtn.addEventListener("click", function() {
+  settingsPopup.style.display = "none";
+});
+
+// Save बटण
+saveSettingsBtn.addEventListener("click", function() {
+  const name = userNameInput.value.trim();
+  const mobile = mobileInput.value.trim();
+
+  if (!name) {
+    alert("नाव टाकणे आवश्यक आहे.");
+    return;
+  }
+  if (!/^\d{10}$/.test(mobile)) {
+    alert("कृपया योग्य 10 अंकी मोबाइल नंबर द्या.");
+    return;
   }
 
-  function deleteAllData() {
-    if(confirm("Are you sure you want to delete all data?")) {
-      employees = [];
-      duties = [];
-      deletedEmployees = [];
-      saveData();
-      renderEmployees();
-      renderDuties();
-      renderDeletedEmployees();
-      document.getElementById('reportResult').innerHTML = '';
-      document.getElementById('deletedHistoryResult').innerHTML = '';
-    }
+  localStorage.setItem("userName", name);
+  localStorage.setItem("mobileNumber", "91" + mobile);
+
+  headerTitle.innerText = `🍴 केटरिंग ड्युटी ट्रॅकर - ${name}`;
+
+  alert("सेटिंग्ज जतन झाल्या ✅");
+  settingsPopup.style.display = "none";
+});
+
+// पेज लोड झाल्यावर आधीचे values दाखवा
+window.addEventListener("load", function() {
+  const savedName = localStorage.getItem("userName");
+  const savedMobile = localStorage.getItem("mobileNumber");
+
+  if (savedName) {
+    userNameInput.value = savedName;
+    headerTitle.innerText = `🍴 केटरिंग ड्युटी ट्रॅकर - ${savedName}`;
+  }
+  if (savedMobile) {
+    mobileInput.value = savedMobile.slice(2); // 91 काढून फक्त 10 अंक दाखवा
+  }
+});
+
+saveSettingsBtn.addEventListener("click", function() {
+  const name = userNameInput.value.trim();
+  const mobile = mobileInput.value.trim();
+
+  if (!name) {
+    alert("नाव टाकणे आवश्यक आहे.");
+    return;
+  }
+  if (!/^\d{10}$/.test(mobile)) {
+    alert("कृपया योग्य 10 अंकी मोबाइल नंबर द्या.");
+    return;
   }
 
-  // Initial render
-  renderEmployees();
-  renderDuties();
-  renderDeletedEmployees();
-           </script>
+  localStorage.setItem("userName", name);
+  localStorage.setItem("mobileNumber", "91" + mobile);
+
+  headerTitle.innerText = `🍴 केटरिंग ड्युटी ट्रॅकर - ${name}`;
+
+  alert("सेटिंग्ज जतन झाल्या ✅");
+
+  // इथे overlay आणि popup दोन्ही बंद करा
+  document.getElementById("settingsOverlay").style.display = "none";
+  settingsPopup.style.display = "none";
+});
+
+
+settingsBtn.addEventListener("click", function() {
+  document.getElementById("settingsOverlay").style.display = "block";
+  document.getElementById("settingsPopup").style.display = "block";
+});
+
+closeSettings.addEventListener("click", function() {
+  document.getElementById("settingsOverlay").style.display = "none";
+  document.getElementById("settingsPopup").style.display = "none";
+});
+// Name mobile number 
+
+
+window.onload = loadData;
+                          </script>
