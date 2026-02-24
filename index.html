@@ -41,9 +41,14 @@
 </head>
 <body>
   <div class="container">
-<div style="display:flex; align-items:center; justify-content:space-between;">
-  <h2 id="headerTitle" style="margin:0;"></h2>
-  <button id="settingsBtn" style="margin-left:10px;">⚙️</button>
+    
+<div style="display:flex; align-items:center; justify-content:center; gap:8px; 
+            padding:10px; border-bottom:1px solid #ddd;">
+  <h2 id="headerTitle" style="margin:0; font-size:20px; color:#333;">🍴 Guruling</h2>
+  <button id="settingsBtn" 
+          style="background:none; border:none; cursor:pointer; font-size:18px; color:#333;">
+    ⚙️
+  </button>
 </div>
 
 <!-- Overlay -->
@@ -379,7 +384,7 @@ saveSettingsBtn.addEventListener("click", function() {
   localStorage.setItem("userName", name);
   localStorage.setItem("mobileNumber", "91" + mobile);
 
-  headerTitle.innerText = `🍴 केटरिंग ड्युटी ट्रॅकर - ${name}`;
+  headerTitle.innerText = `${name}`;
 
   alert("सेटिंग्ज जतन झाल्या ✅");
   settingsPopup.style.display = "none";
@@ -392,7 +397,7 @@ window.addEventListener("load", function() {
 
   if (savedName) {
     userNameInput.value = savedName;
-    headerTitle.innerText = `🍴 केटरिंग ड्युटी ट्रॅकर - ${savedName}`;
+    headerTitle.innerText = `${savedName}`;
   }
   if (savedMobile) {
     mobileInput.value = savedMobile.slice(2); // 91 काढून फक्त 10 अंक दाखवा
@@ -415,7 +420,7 @@ saveSettingsBtn.addEventListener("click", function() {
   localStorage.setItem("userName", name);
   localStorage.setItem("mobileNumber", "91" + mobile);
 
-  headerTitle.innerText = `🍴 केटरिंग ड्युटी ट्रॅकर - ${name}`;
+  headerTitle.innerText = ` ${name}`;
 
   alert("सेटिंग्ज जतन झाल्या ✅");
 
@@ -436,9 +441,9 @@ closeSettings.addEventListener("click", function() {
 });
 // Name mobile number 
 
-
 window.onload = loadData;
-                          </script>
+</script>
+
 
 <h6 style="text-align:center; font-family:Arial, sans-serif; font-weight:bold;">
   Created by Guru Gaidhankar(9822268544)
