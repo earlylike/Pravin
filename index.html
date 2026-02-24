@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title></title>
   <style>
-  
    .whatsapp-icon {
       position: absolute;
       top: 10px;            /* distance from top inside container */
@@ -19,43 +18,96 @@
       color: #20b858;
     }
     
-  
-  
-  
-  
     body {
-      margin: 0; padding: 0;
+      margin: 0; 
+      padding: 0;
+      overflow-x: hidden;   /* horizontal scroll बंद */
+      overscroll-behavior-x: none; /* drag करून डावीकडे-उजवीकडे हलणार नाही */
       font-family: Arial, sans-serif;
       background: linear-gradient(to right, #4facfe, #00f2fe);
     }
+
     .container {
-      width: 95%; max-width: 600px;
-      margin: 20px auto; background: #fff;
-      padding: 20px; border-radius: 12px;
+      width: 100%;          /* mobile वर full width */
+      max-width: 600px;     /* मोठ्या screen वर limit */
+      margin: 20px auto; 
+      background: #fff;
+      padding: 20px; 
+      border-radius: 12px;
       box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+      box-sizing: border-box; /* padding width मध्ये count होईल */
+      overflow-x: hidden;   /* container मध्ये horizontal scroll बंद */
     }
-    h2, h3 { text-align: center; }
-    label { display: block; margin: 8px 0 4px; font-weight: bold; }
+
+    h2, h3 { 
+      text-align: center; 
+    }
+
+    label { 
+      display: block; 
+      margin: 8px 0 4px; 
+      font-weight: bold; 
+    }
+
     input, select, button {
-      width: 100%; padding: 12px; margin-bottom: 12px;
-      border-radius: 8px; border: 1px solid #ccc;
-      font-size: 1em; box-sizing: border-box; height: 45px;
+      width: 100%; 
+      padding: 12px; 
+      margin-bottom: 12px;
+      border-radius: 8px; 
+      border: 1px solid #ccc;
+      font-size: 1em; 
+      box-sizing: border-box; 
+      height: 45px;
     }
-    button { border: none; cursor: pointer; color: #fff; }
+
+    button { 
+      border: none; 
+      cursor: pointer; 
+      color: #fff; 
+    }
+
     .btn-primary { background: #007bff; }
     .btn-success { background: #28a745; }
     .btn-danger { background: #dc3545; }
     .btn-secondary { background: #6c757d; }
-    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    .btn-whatsapp { background: #25D366; }
+
+    table { 
+      width: 100%; 
+      border-collapse: collapse; 
+      margin-top: 15px; 
+      table-layout: fixed; /* columns fix होतील */
+    }
+
     table td, table th {
-      border: 1px solid #ddd; padding: 8px; text-align: center;
+      border: 1px solid #ddd; 
+      padding: 8px; 
+      text-align: center;
+      word-wrap: break-word;   /* लांब शब्द wrap होतील */
+      white-space: normal;     /* text break होईल */
+      overflow: hidden;        
+      text-overflow: ellipsis; 
     }
-    table th { background-color: #f2f2f2; }
+
+    /* Column widths */
+    table th:nth-child(1), table td:nth-child(1) { width: 30%; }  /* तारीख */
+    table th:nth-child(2), table td:nth-child(2) { width: 40%; }  /* ठिकाण */
+    table th:nth-child(3), table td:nth-child(3) { width: 15%; }  /* फुलडे */
+    table th:nth-child(4), table td:nth-child(4) { width: 15%; }  /* हाफडे */
+
+    table th { 
+      background-color: #f2f2f2; 
+    }
+
     #billOutput {
-      margin-top: 20px; font-weight: bold; font-size: 1.1em;
-      background: #f8f9fa; padding: 15px; border-radius: 8px;
+      margin-top: 20px; 
+      font-weight: bold; 
+      font-size: 1.1em;
+      background: #f8f9fa; 
+      padding: 15px; 
+      border-radius: 8px;
     }
-  </style>
+</style>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
@@ -117,12 +169,12 @@
 
       <label for="dutyType">ड्युटी प्रकार</label>
       <select id="dutyType" required>
+         <option value="half">हाफ डे</option>
         <option value="full">फुल डे</option>
-        <option value="half">हाफ डे</option>
-      </select>
+        </select>
 
-      <button type="submit" class="btn-primary">ड्युटी नोंदवा</button>
-      <button type="reset" class="btn-secondary">साफ करा</button>
+      <button type="submit" class="btn-primary">Save</button>
+      <button type="reset" class="btn-secondary">Clear</button>
     </form>
 
     <!-- ड्युटी रेकॉर्ड्स -->
@@ -132,8 +184,8 @@
         <tr>
           <th>तारीख</th>
           <th>ठिकाण</th>
-          <th>फुल डे</th>
-          <th>हाफ डे</th>
+          <th>फुलडे</th>
+          <th>हाफडे</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -149,6 +201,8 @@
   
     
     </div>
+    
+ 
    
     <!-- नवीन: एक रेकॉर्ड काढण्यासाठी -->
     <div class="mt-4 text-center">
@@ -179,6 +233,12 @@ const generateBillBtn = document.getElementById('generateBill');
 const billOutput = document.getElementById('billOutput');
 
 // नवीन बटण
+
+// dummy
+
+// dummy
+
+
 
 
 function formatDate(dateStr) {
@@ -464,6 +524,11 @@ closeSettings.addEventListener("click", function() {
 function toggleSidebar() {
     document.getElementById("sidebar").classList.toggle("active");
   }
+  
+  
+  
+  
+  
 
 window.onload = loadData;
 </script>
@@ -471,4 +536,4 @@ window.onload = loadData;
 
 <h6 style="text-align:center; font-family:Arial, sans-serif; font-weight:bold;">
   Created by Guru Gaidhankar(9822268544)
-</h6>
+  </h6>
