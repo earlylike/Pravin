@@ -5,6 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title></title>
   <style>
+  
+   .whatsapp-icon {
+      position: absolute;
+      top: 10px;            /* distance from top inside container */
+      right: 10px;          /* distance from right inside container */
+      font-size: 32px;      /* medium size */
+      color: #25D366;       /* WhatsApp green */
+      text-decoration: none;
+    }
+
+    .whatsapp-icon:hover {
+      color: #20b858;
+    }
+    
+  
+  
+  
+  
     body {
       margin: 0; padding: 0;
       font-family: Arial, sans-serif;
@@ -38,6 +56,7 @@
       background: #f8f9fa; padding: 15px; border-radius: 8px;
     }
   </style>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 </head>
 <body>
   <div class="container">
@@ -45,10 +64,11 @@
 <div style="display:flex; align-items:center; justify-content:center; gap:8px; 
             padding:10px; border-bottom:1px solid #ddd;">
   <h2 id="headerTitle" style="margin:0; font-size:20px; color:#333;"></h2>
-  <button id="settingsBtn" 
-          style="background:none; border:none; cursor:pointer; font-size:18px; color:#333;">
-    ⚙️
-  </button>
+  
+     
+    
+  <h4 id="settingsBtn" class="whatsapp-icon" style="margin-left:8px; margin-top:10px">⚙️</h4>
+  
 </div>
 
 <!-- Overlay -->
@@ -440,6 +460,10 @@ closeSettings.addEventListener("click", function() {
   document.getElementById("settingsPopup").style.display = "none";
 });
 // Name mobile number 
+
+function toggleSidebar() {
+    document.getElementById("sidebar").classList.toggle("active");
+  }
 
 window.onload = loadData;
 </script>
