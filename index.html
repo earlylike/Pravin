@@ -4,6 +4,12 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title></title>
+  
+   
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.25/jspdf.plugin.autotable.min.js"></script>
+  
+  
   <style>
    .whatsapp-icon {
       position: absolute;
@@ -182,10 +188,10 @@
     <table id="recordsTable">
       <thead>
         <tr>
-          <th>तारीख</th>
-          <th>ठिकाण</th>
-          <th>फुलडे</th>
-          <th>हाफडे</th>
+          <th>Date</th>
+          <th>Location</th>
+          <th>Full Day</th>
+          <th>Half Day</th>
         </tr>
       </thead>
       <tbody></tbody>
@@ -199,7 +205,7 @@
            
    <button id="sendWhatsApp" class="btn-success">📲 WhatsApp वर पाठवा</button>
   
-    
+    <button onclick="downloadPDF()" class="btn-success">📲 Download PDF</button>
     </div>
     
  
@@ -235,7 +241,37 @@ const billOutput = document.getElementById('billOutput');
 // नवीन बटण
 
 // dummy
+function downloadPDF() {
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF();
+      
+      const savedName = localStorage.getItem("userName");
+  const savedMobile = localStorage.getItem("mobileNumber");
 
+const pageWidth = doc.internal.pageSize.getWidth();
+
+// Center the text by subtracting half of its width
+doc.text(savedName, pageWidth / 2, 15, { align: "center" });
+
+
+      
+      
+    //  doc.autoTable({ html: '#recordsTable'//, startY: 20 });
+      
+      // Add the table below the title
+doc.autoTable({ html: '#recordsTable', startY: 25 });
+
+
+
+
+// only for billll
+
+// only for bill printing 
+
+
+
+      doc.save("billll.pdf");
+    }
 // dummy
 
 
@@ -342,6 +378,94 @@ generateBillBtn.addEventListener('click', function() {
   let fullCount = 0;
   let halfCount = 0;
 
+  // Loop through table rows
+  Array.from(tableBody.rows).forEach(row => {
+    const f = parseInt(row.cells[2].innerText) || 0; // Full day count
+    const h = parseInt(row.cells[3].innerText) || 0; // Half day count
+    fullCount += f;
+    halfCount += h;
+  });
+
+  // Calculate subtotals
+  const fullSubtotal = fullCount * 800;
+  const halfSubtotal = halfCount * 500;
+  const total = fullSubtotal + halfSubtotal;
+
+  // Show summary on screen
+  billOutput.innerHTML = `
+    <div style="background:#fefefe; border:2px solid #4CAF50; border-radius:12px; padding:16px; font-family:'Segoe UI', sans-serif; max-width:400px; margin:auto;">
+      <div style="text-align:center; margin-bottom:10px;">
+        💵 <strong style="color:#2E8B57; font-size:20px;">Bill Summary</strong>
+      </div>
+      <div style="margin-bottom:8px;">Half Day: ${halfCount} = ${halfCount} × 500 = Rs.${halfSubtotal}</div>
+      <div style="margin-bottom:8px;">Full Day: ${fullCount} = ${fullCount} × 800 = Rs.${fullSubtotal}</div>
+      <div style="text-align:right; margin-top:12px;">
+        <strong style="color:#d32f2f; font-size:18px;">Grand Total = Rs.${total}</strong>
+      </div>
+      <div style="text-align:center; margin-top:15px;">
+        <button id="downloadBtn" style="padding:10px 20px; background:#4CAF50; color:white; border:none; border-radius:5px; cursor:pointer;">Download Bill PDF</button>
+      </div>
+    </div>
+  `;
+
+  // Attach event to download button
+  document.getElementById('downloadBtn').addEventListener('click', function() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    // Title
+    doc.setFontSize(18);
+    doc.setTextColor(46, 139, 87);
+    doc.text("💵 Bill Summary", pageWidth / 2, 20, { align: "center" });
+
+    // Divider line
+    doc.setDrawColor(0);
+    doc.setLineWidth(0.5);
+    doc.line(20, 25, pageWidth - 20, 25);
+
+    // Content
+    doc.setFontSize(14);
+    doc.setTextColor(50, 50, 50);
+    let y = 40;
+
+    doc.text(`Half Day: ${halfCount} = ${halfCount} × 500 = Rs.${halfSubtotal}`, 20, y);
+    y += 12;
+    doc.text(`Full Day: ${fullCount} = ${fullCount} × 800 = Rs.${fullSubtotal}`, 20, y);
+    y += 12;
+
+    // Grand Total highlighted
+    doc.setFontSize(16);
+    doc.setTextColor(211, 47, 47);
+    doc.text(`Grand Total = Rs.${total}`, pageWidth - 20, y + 10, { align: "right" });
+
+    doc.save("bill.pdf");
+  });
+});
+
+  // Function to download bill table as PDF
+
+function downloadPDF() {
+  const { jsPDF } = window.jspdf;
+  const doc = new jsPDF();
+  const pageWidth = doc.internal.pageSize.getWidth();
+
+  // Fetch saved values
+  const savedName = localStorage.getItem("userName");
+  const savedMobile = localStorage.getItem("mobileNumber");
+
+  // Title
+  doc.setFontSize(16);
+  doc.text(savedName || "Customer", pageWidth / 2, 15, { align: "center" });
+
+  // Add table
+  doc.autoTable({ html: '#recordsTable', startY: 25 });
+
+  // Calculate totals from table
+  let fullCount = 0;
+  let halfCount = 0;
+  const tableBody = document.querySelector("#recordsTable tbody");
+
   Array.from(tableBody.rows).forEach(row => {
     const f = parseInt(row.cells[2].innerText) || 0;
     const h = parseInt(row.cells[3].innerText) || 0;
@@ -353,35 +477,24 @@ generateBillBtn.addEventListener('click', function() {
   const halfSubtotal = halfCount * 500;
   const total = fullSubtotal + halfSubtotal;
 
-  billOutput.innerHTML = `
-  <div style="
-    background: #fefefe;
-    border: 2px solid #4CAF50;
-    border-radius: 12px;
-    padding: 16px;
-    font-family: 'Segoe UI', sans-serif;
-    color: #333;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-    max-width: 320px;
-    line-height: 1.6;
-  ">
-    <div style="text-align:center; margin-bottom:10px;">
-      💵 <strong style="color:#2E8B57; font-size:20px;">बिल</strong>
-    </div>
-    <div style="margin-bottom:8px; color:#555;">
-      हाफ डे = ${halfCount}<br>
-      ${halfCount} × 500 = <strong style="color:#000;">Rs.${halfSubtotal}</strong>
-    </div>
-    <div style="margin-bottom:8px; color:#555;">
-      फुल डे = ${fullCount}<br>
-      ${fullCount} × 800 = <strong style="color:#000;">Rs.${fullSubtotal}</strong>
-    </div>
-    <div style="text-align:right; margin-top:12px;">
-      <strong style="color:#d32f2f; font-size:18px;">एकूण = Rs.${total}</strong>
-    </div>
-  </div>
-`;
-});
+  // Position summary below table
+  let finalY = doc.lastAutoTable.finalY + 15;
+
+  doc.setFontSize(14);
+  doc.text(`Half Day: ${halfCount} × 500 = Rs.${halfSubtotal}`, 20, finalY);
+  finalY += 10;
+  doc.text(`Full Day: ${fullCount} × 800 = Rs.${fullSubtotal}`, 20, finalY);
+  finalY += 10;
+
+  doc.setFontSize(16);
+  doc.setTextColor(211, 47, 47);
+  doc.text(`Grand Total = Rs.${total}`, pageWidth - 20, finalY + 10, { align: "right" });
+
+  // Save merged bill
+  doc.save("billll.pdf"); // kept your original filename
+}
+
+
 
 // WhatsApp वर पाठवणे
 // HTML मध्ये असलेले बटण: <button id="sendWhatsApp" class="btn-success">📲 WhatsApp वर पाठवा</button>
@@ -536,4 +649,4 @@ window.onload = loadData;
 
 <h6 style="text-align:center; font-family:Arial, sans-serif; font-weight:bold;">
   Created by Guru Gaidhankar(9822268544)
-  </h6>
+</h6>
